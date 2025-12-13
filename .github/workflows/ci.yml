@@ -1,0 +1,72 @@
+name: CI Pipeline
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.11'
+    
+    - name: Cache pip packages
+      uses: actions/cache@v3
+      with:
+        path: ~/.cache/pip
+        key: ${{ runner.os }}-pip-${{ hashFiles('**/requirements.txt') }}
+        restore-keys: |
+          ${{ runner.os }}-pip-
+    
+    - name: Install dependencies
+      run: |
+        python -m pip install --upgrade pip
+        pip install -r requirements.txt
+    
+    - name: Verify imports
+      run: |
+        python -c "from drug_cost_agent import root_agent; print('✓ Agent imports successfully')"
+        python -c "from src.tools_medicare import medicare_latest_year, medicare_lookup_costs; print('✓ Medicare tools import successfully')"
+        python -c "from src.tools_ob import ob_match_identity, ob_find_equivalents, ob_ingredient_to_generic_candidates; print('✓ Orange Book tools import successfully')"
+        python -c "from src.paths import products_db_path, medicare_db_path; print('✓ Path utilities import successfully')"
+    
+    - name: Check code structure
+      run: |
+        echo "Checking required files..."
+        test -f drug_cost_agent/__init__.py || exit 1
+        test -f drug_cost_agent/agent.py || exit 1
+        test -f src/paths.py || exit 1
+        test -f src/tools_medicare.py || exit 1
+        test -f src/tools_ob.py || exit 1
+        test -f requirements.txt || exit 1
+        echo "✓ All required files present"
+    
+    - name: Validate agent configuration
+      run: |
+        python -c "
+        from drug_cost_agent import root_agent
+        assert root_agent.name == 'drug_cost_agent', 'Agent name mismatch'
+        assert root_agent.model == 'gemini-2.5-flash', 'Model mismatch'
+        assert len(root_agent.tools) == 5, f'Expected 5 tools, got {len(root_agent.tools)}'
+        print('✓ Agent configuration valid')
+        "
+    
+    - name: Check for syntax errors
+      run: |
+        python -m py_compile drug_cost_agent/agent.py
+        python -m py_compile src/paths.py
+        python -m py_compile src/tools_medicare.py
+        python -m py_compile src/tools_ob.py
+        echo "✓ No syntax errors found"
+
+
+

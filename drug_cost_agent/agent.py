@@ -9,10 +9,11 @@ from google.adk.agents import Agent
 from src.tools_ob import ob_match_identity, ob_find_equivalents, ob_ingredient_to_generic_candidates
 from src.tools_medicare import medicare_latest_year, medicare_lookup_costs
 
-# Load environment variables from .env file if it exists
-# ADK will automatically read GOOGLE_API_KEY from environment
+# Load environment variables from .env file if it exists (optional)
+# ADK will automatically read GOOGLE_API_KEY from environment variables
 env_path = Path(__file__).resolve().parents[1] / ".env"
-load_dotenv(env_path)
+if env_path.exists():
+    load_dotenv(env_path)
 
 root_agent = Agent(
     name="drug_cost_agent",

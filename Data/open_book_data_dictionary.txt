@@ -1,0 +1,16 @@
+Data Descriptions
+Products.txt
+Ingredient: The active ingredient(s) for the product. Multiple ingredients are in alphabetical order, separated by a semicolon.
+Dosage form; Route of Administration: The product dosage form and route separated by a semi-colon. The format is not all uppercase.
+Trade Name: The trade name of the product as shown on the labeling.
+Applicant: The firm name holding legal responsibility for the new drug application. The firm name is condensed to a maximum twenty character unique string.
+Strength: The potency of the active ingredient. May repeat for multiple part products.
+New Drug Application Type: The type of new drug application approval. New Drug Applications (NDA or innovator) are ”N”. Abbreviated New Drug Applications (ANDA or generic) are “A”.
+New Drug Application (NDA) Number: The FDA assigned number to the application. Format is nnnnnn.
+Product Number: The FDA assigned number to identify the application products. Each strength is a separate product. May repeat for multiple part products. Format is nnn.
+Therapeutic Equivalence (TE) Code: The TE Code indicates the therapeutic equivalence rating of generic to innovator Rx products.
+Approval Date: The date the product was approved as stated in the FDA approval letter to the applicant.  The format is Mmm dd, yyyy. Products approved prior to the January 1, 1982 contain the phrase: "Approved prior to Jan 1, 1982".
+Reference Listed Drug (RLD): The RLD is a drug product approved under section 505(c) of the FD&C Act for which FDA has made a finding of safety and effectiveness. In the electronic Orange Book, an RLD is identified by “RLD” in the RLD column.
+Reference Standard (RS): A “reference standard” is the drug product selected by FDA that an applicant seeking approval of an ANDA must use in conducting an in vivo bioequivalence study required for approval of an ANDA. In the electronic Orange Book, a reference standard is identified by “RS” in the RS column.
+Type: The group or category of approved drugs. Format is RX, OTC, DISCN.
+Applicant Full Name: The full name of the firm holding legal responsibility for the new drug application.
