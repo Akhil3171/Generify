@@ -1,0 +1,30 @@
+# Virtual environment
+venv/
+env/
+.venv/
+
+# Byte-compiled files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Editor/IDE files
+.vscode/
+.idea/
+.project
+
+# Distribution and packaging
+dist/
+build/
+*.egg
+*.egg-info/
+
+# Sensitive data
+.env
+pip-log.txt
+*.log
+
+# OS-specific files
+.DS_Store
+Thumbs.db
