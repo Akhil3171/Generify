@@ -12,6 +12,7 @@ The agent processes user input through the following step-by-step workflow:
 - If session-based memory is enabled, the system retrieves past interactions
 - Uses keyword matching to find relevant previous queries
 - Context from memory can inform planning decisions
+### This is not used, we used a tool instead, memory_tools in src/tools subdirectory
 - **Implementation**: `src/memory.py` → `retrieve_from_session()`
 
 ### Step 3: Plan Sub-Tasks
@@ -96,6 +97,9 @@ plan = planner.build_plan("Find cheapest equivalent for Lipitor 20mg")
 
 **Error Handling**: Catches exceptions, returns error messages, handles missing data gracefully.
 
+///
+NEW: for Memory implementation for Generify, see now in Tools section of this document ## Memory Tools  (`src/tools/memory_tools.py`)
+///
 ### Memory Store (`src/memory.py`)
 
 **Purpose**: Stores and retrieves conversation context with session support.
@@ -125,10 +129,6 @@ store_session(session_id, "Find Lipitor alternatives", results, response)
 past = retrieve_from_session(session_id, "cheaper option", limit=3)
 ```
 
-**Limitations**: 
-- Simple keyword matching (not semantic search)
-- JSON file storage (not scalable for production)
-- No vector embeddings (could be enhanced)
 
 ## 3. Tool Integration
 
@@ -156,7 +156,7 @@ past = retrieve_from_session(session_id, "cheaper option", limit=3)
 - Optional `.env` file fallback
 - Lazy initialization (only configures when needed)
 
-### Orange Book Tools (`src/tools_ob.py`)
+### Orange Book Tools (`src/tools/tools_ob.py`)
 
 **Tool 1**: `ob_match_identity(drug_name, strength)`
 - **Purpose**: Find drug in FDA Orange Book
@@ -179,7 +179,7 @@ past = retrieve_from_session(session_id, "cheaper option", limit=3)
 - **Algorithm**: Removes salt suffixes (HCl, sodium, etc.) from ingredient name
 - **Returns**: List of candidate generic names
 
-### Medicare Tools (`src/tools_medicare.py`)
+### Medicare Tools (`src/tools/tools_medicare.py`)
 
 **Tool 1**: `medicare_latest_year()`
 - **Purpose**: Get latest year with Medicare Part D data
@@ -192,6 +192,37 @@ past = retrieve_from_session(session_id, "cheaper option", limit=3)
 - **Search**: By normalized brand name OR generic name
 - **Sorting**: By `avg_spend_per_dose` (ascending - cheapest first)
 - **Returns**: List of cost records with manufacturer info
+
+## Memory Tools  (`src/tools/memory_tools.py`)
+
+### Long-Term Memory
+Generify remembers previous drug queries across sessions to provide faster, context-aware responses.
+
+**Features:**
+- Recalls past drug lookups automatically
+- Tracks query frequency per drug
+- Persists across server restarts
+- Provides context from recent searches
+
+**Example:**
+```
+First query: "Wellbutrin 300mg"
+→ Full lookup with Medicare data, result is Wellbutrin XL (BUPROPION HYDROCHLORIDE) 300mg, Extended Release Tablet, Oral.
+
+Later query: "Wellbutrin XL 300mg"
+→ "I've looked into Wellbutrin 300mg recently!"
+   [Provides cached insights + updated data]
+```
+
+**Implementation:**
+Memory is implemented as agent tools (`remember_drug_query`, `recall_drug_query`, `get_recent_queries`) that the LLM autonomously uses to enhance user experience.
+
+**Storage:**
+`data/drug_memory.json` - Persistent file-based storage
+
+**Limitations**: 
+- JSON file storage (not scalable for production)
+- No vector embeddings (could be enhanced)
 
 ## 4. Observability & Testing
 
