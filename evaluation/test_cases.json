@@ -18,7 +18,7 @@
           "final_response": {
             "parts": [
               {
-                "text": "generic version of Lipitor, atorvastatin 20mg."
+                "text": "For Lipitor 20mg, the cheapest therapeutically equivalent option is its generic, Atorvastatin Calcium.\n Here's a comparison of the average spend per dosage unit under Medicare Part D in 2023: Lipitor (brand): $15.68\n Atorvastatin Calcium (generic): As low as $0.11 (from Marlex Pharm.) This means the generic Atorvastatin Calcium\n can be significantly cheaper. Please remember that this is a program-level average and your individual co-pay may vary."
               }
             ],
           "role": "model"
@@ -41,7 +41,7 @@
           "final_response": {
             "parts": [
               {
-                "text": "methylphenidate HCl 10mg."
+                "text": "For Ritalin 10mg, here are the therapeutically equivalent options ranked by their average Medicare Part D spend per dosage unit in 2023:\n Ritalin (Brand-name): $1.28 per dose\n Methylphenidate (Generic from Mylan): $12.64 per dose\n Methylphenidate (Generic, overall average): $12.64 per dose\n Methylphenidate (Generic from Padagis): $12.65 per dose\n Daytrana (Brand-name Methylphenidate): $15.28 per dose\n Cotempla XR-ODT (Brand-name Methylphenidate): $16.89 per dose\n Based on the 2023 Medicare Part D data, the brand-name Ritalin 10mg tablet has the lowest average spend per dosage unit among the therapeutically equivalent options.\n Please remember that this metric reflects program-level average spend and may not directly equate to your individual co-pay."
               }
             ],
           "role": "model"
