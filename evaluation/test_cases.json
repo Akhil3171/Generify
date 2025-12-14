@@ -4,7 +4,7 @@
   "description": "Test Cases for use with Google ADK adk eval",
   "eval_cases": [
     {
-      "eval_id": "Test case 1: lipitor_20mg.",
+      "eval_id": "Test case 1: lipitor_20mg-Generic drug cheaper.",
       "conversation": [
         {
           "user_content": { 
@@ -27,7 +27,7 @@
       ]
     },
   {
-    "eval_id": "Test case 2: ritalin_10mg.",
+    "eval_id": "Test case 2: ritalin_10mg-Brand Name drug cheaper.",
     "conversation": [
       {
         "user_content": { 
@@ -42,6 +42,75 @@
             "parts": [
               {
                 "text": "For Ritalin 10mg, here are the therapeutically equivalent options ranked by their average Medicare Part D spend per dosage unit in 2023:\n Ritalin (Brand-name): $1.28 per dose\n Methylphenidate (Generic from Mylan): $12.64 per dose\n Methylphenidate (Generic, overall average): $12.64 per dose\n Methylphenidate (Generic from Padagis): $12.65 per dose\n Daytrana (Brand-name Methylphenidate): $15.28 per dose\n Cotempla XR-ODT (Brand-name Methylphenidate): $16.89 per dose\n Based on the 2023 Medicare Part D data, the brand-name Ritalin 10mg tablet has the lowest average spend per dosage unit among the therapeutically equivalent options.\n Please remember that this metric reflects program-level average spend and may not directly equate to your individual co-pay."
+              }
+            ],
+          "role": "model"
+          }
+        } 
+      ]
+    },
+  {
+    "eval_id": "Test case 3: prozac_20mg-No Medicare Part D average spend data for its generic equivalent.",
+    "conversation": [
+      {
+        "user_content": { 
+           "parts": [
+              {
+                "text": "Prozac 20mg"
+              }
+            ],
+          "role": "user"     
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "Prozac 20mg is a brand-name drug. Its therapeutic equivalent is Fluoxetine Hydrochloride.\n Using the latest available data from 2023, the average Medicare Part D spend per dosage unit for Prozac is $24.66.\n I could not find Medicare Part D average spend data for its generic equivalent, Fluoxetine Hydrochloride, for 2023.\n Please note that this metric is program-level and may not reflect your individual co-pay."
+              }
+            ],
+          "role": "model"
+          }
+        } 
+      ]
+    },
+    {
+    "eval_id": "Test case 4: vraylar_3mg-no generic therapeutic equivalent drug identified 12-14-2025.",
+    "conversation": [
+      {
+        "user_content": { 
+           "parts": [
+              {
+                "text": "Vraylar 3mg"
+              }
+            ],
+          "role": "user"     
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "Vraylar 3mg is a brand-name drug. According to the Orange Book, there are no therapeutic equivalents (generic options) for Vraylar 3mg.\n Using the latest available data from 2023, the average Medicare Part D spend per dosage unit for Vraylar is $48.81.\n Please note that this metric is program-level and may not reflect your individual co-pay."
+              }
+            ],
+          "role": "model"
+          }
+        } 
+      ]
+    },
+    {
+    "eval_id": "Test case 5: memory_test.",
+    "conversation": [
+      {
+        "user_content": { 
+           "parts": [
+              {
+                "text": "Show me my recent drug searches"
+              }
+            ],
+          "role": "user"     
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "Vraylar 3mg: Vraylar 3mg (brand) has an average Medicare Part D spend of $48.81 per dose in 2023. No therapeutic equivalents (generic options) were found for Vraylar 3mg.\n prozac 20mg: Prozac 20mg (brand) has an average Medicare Part D spend of $24.66 per dose in 2023. No Medicare Part D average spend data was found for its generic equivalent, Fluoxetine Hydrochloride, for 2023.\n Ritalin 10mg: For Ritalin 10mg, the brand-name Ritalin had the lowest average Medicare Part D spend per dosage unit at $1.28 in 2023. Generic Methylphenidate options (e.g., from Mylan, Padagis) were significantly higher, ranging from $12.64 to $12.65 per dose. Other brand-name Methylphenidate products like Daytrana and Cotempla XR-ODT had even higher costs, ranging from $15.28 to $16.89 per dose. This indicates that the brand-name Ritalin 10mg tablet is currently the most cost-effective option based on Medicare Part D average spend for 2023.Lipitor 20mg: For Lipitor 20mg, the cheapest therapeutically equivalent option is its generic, Atorvastatin Calcium. Here's a comparison of the average spend per dosage unit under Medicare Part D in 2023: Lipitor (brand): $15.68. Atorvastatin Calcium (generic): As low as $0.11 (from Marlex Pharm.)."
               }
             ],
           "role": "model"

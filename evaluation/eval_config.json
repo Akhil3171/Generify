@@ -1,7 +1,6 @@
 {
   "criteria": {
-    "tool_trajectory_avg_score": 0.7,
-    "response_match_score": 0.7
+    "final_response_match_v2": 0.8
   },
   "user_simulator_config": null
 }
