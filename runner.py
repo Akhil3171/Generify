@@ -1,7 +1,6 @@
 """
 Generify Custom Runner with LoggingPlugin
-This file is used by: adk web --runner runner.py
-Author: 2 files by Claude.ai combined into one by Yifon
+Author: 2 files by Claude.ai combined into one by Yifon, debugged with Claude.ai
 """
 
 from google.adk.runners import InMemoryRunner
