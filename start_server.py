@@ -1,27 +1,31 @@
 """
-Start ADK web server with custom runner
-Author: Claude.ai and debugged with input from Yifon and Claude.ai
+Start ADK web server - relies on auto-discovery of runner.py
+Author: Claude.ai
 """
 
-import uvicorn
+import logging
 from pathlib import Path
 
-# Import runner to ensure it's loaded
-print("🚀 Loading custom runner...")
-from runner import runner
+# Reduce log noise
+logging.getLogger('aiosqlite').setLevel(logging.WARNING)
+logging.getLogger('httpcore').setLevel(logging.WARNING)
+logging.getLogger('httpx').setLevel(logging.WARNING)
 
-# Get the FastAPI app
-from google.adk.cli.fast_api import get_fast_api_app
+print("\n🚀 Importing runner to ensure it's loaded...")
+# This import triggers runner.py to execute and create the runner
+import runner  # ← Just import the module
 
 print("🚀 Creating FastAPI app...")
+from google.adk.cli.fast_api import get_fast_api_app
+
 app = get_fast_api_app(
-    agents_dir=str(Path.cwd()),  # Current directory
-    web=True,  # Enable web interface
-    reload_agents=True  # Hot reload during development
+    agents_dir=str(Path.cwd()),
+    web=True
 )
 
 if __name__ == "__main__":
-    print("🚀 Starting server on http://127.0.0.1:8000...")
+    import uvicorn
+    print("🚀 Starting server on http://127.0.0.1:8000...\n")
     uvicorn.run(
         app,
         host="127.0.0.1",
