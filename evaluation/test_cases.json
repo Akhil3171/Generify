@@ -1,0 +1,53 @@
+{
+  "eval_set_id": "Generify Evaluation Set",
+  "name": "",
+  "description": "Test Cases for use with Google ADK adk eval",
+  "eval_cases": [
+    {
+      "eval_id": "Test case 1: lipitor_20mg.",
+      "conversation": [
+        {
+          "user_content": { 
+            "parts": [
+              {
+                "text": "What's cheaper than Lipitor 20mg?"
+              }
+            ],
+          "role": "user"     
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "generic version of Lipitor, atorvastatin 20mg."
+              }
+            ],
+          "role": "model"
+          }
+        } 
+      ]
+    },
+  {
+    "eval_id": "Test case 2: ritalin_10mg.",
+    "conversation": [
+      {
+        "user_content": { 
+           "parts": [
+              {
+                "text": "Find alternatives to Ritalin 10mg"
+              }
+            ],
+          "role": "user"     
+          },
+          "final_response": {
+            "parts": [
+              {
+                "text": "methylphenidate HCl 10mg."
+              }
+            ],
+          "role": "model"
+          }
+        } 
+      ]
+    }
+  ]
+}  
