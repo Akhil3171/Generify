@@ -29,47 +29,47 @@ This project follows a hybrid architecture combining:
 │              (Gemini 2.5 Flash)                             │
 │  - Reads user query                                         │
 │  - Decides tool sequence                                    │
-│  - Synthesizes response                                    │
+│  - Synthesizes response                                     │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
 │              Architecture Modules (src/)                    │
-│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
-│  │  planner.py  │  │ executor.py  │  │  memory.py   │     │
-│  │  (Gemini)    │→ │  (Gemini)    │→ │  (JSON)      │     │
-│  │              │  │              │  │              │     │
-│  │ Task break- │  │ Tool orchest-│  │ Session      │     │
-│  │ down        │  │ ration       │  │ storage      │     │
-│  └──────────────┘  └──────────────┘  └──────────────┘     │
-│         │                  │                  │            │
-│         └──────────────────┴──────────────────┘            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐       │
+│  │  planner.py  │  │ executor.py  │  │  memory.py   │       │
+│  │  (Gemini)    │→ │  (Gemini)    │→ │  (JSON)      │       │
+│  │              │  │              │  │              │       │
+│  │ Task break-  │  │ Tool orchest-│  │ Session      │       │
+│  │ down         │  │ ration       │  │ storage      │       │
+│  └──────────────┘  └──────────────┘  └──────────────┘       │
+│         │                  │                  │             │
+│         └──────────────────┴──────────────────┘             │
 │                            │                                │
-│                   agent_core.py                            │
-│              (Workflow Orchestrator)                       │
+│                   agent_core.py                             │
+│              (Workflow Orchestrator)                        │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    Tools Layer (src/tools/)                │
-│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────┐│
-│  │  tools_ob.py     │  │tools_medicare.py │  │memory_   ││
-│  │                  │  │                  │  │tools.py  ││
-│  │ - Match identity │  │ - Latest year    │  │ - Recall ││
-│  │ - Find equivs    │  │ - Lookup costs   │  │ - Remember││
-│  │ - Generic cands  │  │                  │  │ - Recent ││
-│  └──────────────────┘  └──────────────────┘  └──────────┘│
+│                    Tools Layer (src/tools/)                 │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────┐   │
+│  │  tools_ob.py     │  │tools_medicare.py │  │memory_   │   │
+│  │                  │  │                  │  │tools.py  │   │
+│  │ - Match identity │  │ - Latest year    │  │- Recall  │   │
+│  │ - Find equivs    │  │ - Lookup costs   │  │- Remember│   │
+│  │ - Generic cands  │  │                  │  │- Recent  │   │
+│  └──────────────────┘  └──────────────────┘  └──────────┘   │
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    Data Layer                               │
-│  ┌──────────────────┐      ┌──────────────────┐           │
-│  │  products.db     │      │  medicare.db     │           │
-│  │  (Orange Book)   │      │  (CMS Part D)    │           │
-│  └──────────────────┘      └──────────────────┘           │
+│  ┌──────────────────┐      ┌──────────────────┐             │
+│  │  products.db     │      │  medicare.db     │             │
+│  │  (Orange Book)   │      │  (CMS Part D)    │             │
+│  └──────────────────┘      └──────────────────┘             │
 │                                                             │
-│  sessions.json (Session memory storage)                    │
+│  sessions.json (Session memory storage)                     │
 └─────────────────────────────────────────────────────────────┘
 ```
 

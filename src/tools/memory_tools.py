@@ -9,7 +9,9 @@ from datetime import datetime
 from typing import Dict, List, Optional
 
 # Simple file-based storage
-MEMORY_FILE = Path("data/drug_memory.json")
+# Use Data folder (consistent with other data files)
+_repo_root = Path(__file__).resolve().parents[2]
+MEMORY_FILE = _repo_root / "Data" / "drug_memory.json"
 
 def _load_memory() -> Dict:
     """Load memory from file"""
@@ -20,9 +22,10 @@ def _load_memory() -> Dict:
 
 def _save_memory(memory: Dict):
     """Save memory to file"""
+    # Ensure Data directory exists
     MEMORY_FILE.parent.mkdir(exist_ok=True)
-    with open(MEMORY_FILE, 'w') as f:
-        json.dump(memory, f, indent=2)
+    with open(MEMORY_FILE, 'w', encoding='utf-8') as f:
+        json.dump(memory, f, indent=2, ensure_ascii=False)
 
 def remember_drug_query(drug_name: str, dosage: str, result: str) -> Dict:
     """
