@@ -258,8 +258,8 @@ Memory is implemented as agent tools (`remember_drug_query`, `recall_drug_query`
 python -c "from drug_cost_agent import root_agent"
 
 # Test tools
-python -c "from src.tools_ob import ob_match_identity"
-python -c "from src.tools_medicare import medicare_latest_year"
+python -c "from src.tools.tools_ob import ob_match_identity"
+python -c "from src.tools.tools_medicare import medicare_latest_year"
 
 # Test planner (requires API key)
 python -c "from src.planner import build_plan; print(build_plan('test'))"

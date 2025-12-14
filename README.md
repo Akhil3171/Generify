@@ -9,9 +9,9 @@ Generify uses the Orange Book (FDA) to identify therapeutic equivalent drugs and
 ## 📋 Submission Checklist
 
 - [x] All code in `src/` runs without errors  
-- [ ] `ARCHITECTURE.md` contains a clear diagram sketch and explanation  
-- [ ] `EXPLANATION.md` covers planning, tool use, memory, and limitations  
-- [ ] `DEMO.md` links to a 3–5 min video with timestamped highlights  
+- [x] `ARCHITECTURE.md` contains a clear diagram sketch and explanation  
+- [x] `EXPLANATION.md` covers planning, tool use, memory, and limitations  
+- [ ] `DEMO.md` links to a 3–5 min video with timestamped highlights *(Add video link when ready)*  
 
 ## 🚀 Getting Started
 
@@ -91,9 +91,12 @@ Generify/
 │   ├── executor.py           # Tool execution (Gemini API)
 │   ├── memory.py             # Session storage
 │   ├── agent_core.py         # Workflow orchestrator
-│   ├── tools_ob.py           # Orange Book tools
-│   ├── tools_medicare.py     # Medicare Part D tools
-│   └── paths.py              # Database paths
+│   ├── paths.py              # Database paths
+│   ├── tools/                # Tools directory
+│   │   ├── tools_ob.py       # Orange Book tools
+│   │   ├── tools_medicare.py # Medicare Part D tools
+│   │   └── memory_tools.py  # Memory tools (ADK)
+│   └── plugins/              # ADK plugins
 ├── Data/                     # Databases & Source Data
 │   ├── products.db           # Orange Book (built)
 │   ├── medicare.db           # Medicare Part D (built)
@@ -103,7 +106,7 @@ Generify/
 └── .env                      # API key (optional, uses env vars)
 ```
 
-See `STRUCTURE_EXPLANATION.md` for detailed explanation of each file.
+See `ARCHITECTURE.md` and `EXPLANATION.md` for detailed technical explanations.
 
 ### Usage
 
@@ -140,6 +143,8 @@ Once the ADK web server is running, interact with the agent by asking questions 
 ## 📂 Folder Layout
 
 ![Folder Layout Diagram](images/folder-githb.png)
+
+*Visual representation of the project directory structure showing the organization of ADK agent, source code, tools, and data files.*
 
 
 

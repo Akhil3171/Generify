@@ -5,9 +5,15 @@
 This project follows a hybrid architecture combining:
 1. **ADK Agent** (`drug_cost_agent/`) - Web interface using Google ADK
 2. **Architecture Modules** (`src/`) - Required planner/executor/memory pattern
-3. **Tools** (`src/tools_*.py`) - Shared tools used by both
+3. **Tools** (`src/tools/`) - Shared tools used by both
 
 ## High-Level Architecture Diagram
+
+![Architecture Diagram](images/architecture-diagram.png)
+
+*Note: If architecture diagram image is not available, see text diagram below.*
+
+### Text Diagram
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
@@ -45,14 +51,14 @@ This project follows a hybrid architecture combining:
                         │
                         ▼
 ┌─────────────────────────────────────────────────────────────┐
-│                    Tools Layer (src/)                       │
-│  ┌──────────────────┐      ┌──────────────────┐           │
-│  │  tools_ob.py     │      │tools_medicare.py  │           │
-│  │                  │      │                  │           │
-│  │ - Match identity │      │ - Latest year    │           │
-│  │ - Find equivs    │      │ - Lookup costs   │           │
-│  │ - Generic cands  │      │                  │           │
-│  └──────────────────┘      └──────────────────┘           │
+│                    Tools Layer (src/tools/)                │
+│  ┌──────────────────┐  ┌──────────────────┐  ┌──────────┐│
+│  │  tools_ob.py     │  │tools_medicare.py │  │memory_   ││
+│  │                  │  │                  │  │tools.py  ││
+│  │ - Match identity │  │ - Latest year    │  │ - Recall ││
+│  │ - Find equivs    │  │ - Lookup costs   │  │ - Remember││
+│  │ - Generic cands  │  │                  │  │ - Recent ││
+│  └──────────────────┘  └──────────────────┘  └──────────┘│
 └───────────────────────┬─────────────────────────────────────┘
                         │
                         ▼
@@ -132,7 +138,7 @@ This project follows a hybrid architecture combining:
 
 ### 3. Tools / APIs
 
-#### Orange Book Tools (`src/tools_ob.py`)
+#### Orange Book Tools (`src/tools/tools_ob.py`)
 - **Purpose**: FDA Orange Book drug matching and equivalence lookup
 - **Tools**:
   - `ob_match_identity(drug_name, strength)`: Finds drug in Orange Book
@@ -147,7 +153,7 @@ This project follows a hybrid architecture combining:
     - Used as fallback when exact match fails
 - **Database**: `Data/products.db` (Orange Book data)
 
-#### Medicare Tools (`src/tools_medicare.py`)
+#### Medicare Tools (`src/tools/tools_medicare.py`)
 - **Purpose**: Medicare Part D cost lookup
 - **Tools**:
   - `medicare_latest_year()`: Returns latest year with data
@@ -156,6 +162,19 @@ This project follows a hybrid architecture combining:
     - Returns sorted by cost (lowest first)
     - Includes manufacturer info
 - **Database**: `Data/medicare.db` (CMS Part D spending data)
+
+#### Memory Tools (`src/tools/memory_tools.py`)
+- **Purpose**: Long-term memory for drug queries (used by ADK agent)
+- **Tools**:
+  - `remember_drug_query(drug_name, dosage, result)`: Store drug lookup results
+  - `recall_drug_query(drug_name, dosage)`: Retrieve past drug lookups
+  - `get_recent_queries(limit)`: Get recent query history
+- **Storage**: `data/drug_memory.json` (separate from session memory in `Data/sessions.json`)
+- **Features**: 
+  - Tracks query frequency per drug
+  - Persists across server restarts
+  - Provides context from recent searches
+  - Used by ADK agent for faster responses on repeated queries
 
 #### Path Utilities (`src/paths.py`)
 - **Purpose**: Provides database file paths
@@ -186,9 +205,9 @@ This project follows a hybrid architecture combining:
    ↓
 4. Reads instruction → Decides which tools to call
    ↓
-5. src/tools_ob.py & src/tools_medicare.py
+5. src/tools/tools_ob.py, src/tools/tools_medicare.py, src/tools/memory_tools.py
    ↓
-6. Query databases (products.db, medicare.db)
+6. Query databases (products.db, medicare.db) or retrieve memory
    ↓
 7. Return results to agent
    ↓
@@ -207,7 +226,7 @@ This project follows a hybrid architecture combining:
 3. Plan sub-tasks (src/planner.py using Gemini API)
    ↓
 4. Execute plan (src/executor.py)
-   ├── Call tools (src/tools_*.py)
+   ├── Call tools (src/tools/tools_*.py)
    └── Use Gemini for synthesis
    ↓
 5. Generate final response
@@ -231,9 +250,13 @@ Generify/
 │   ├── executor.py          # Tool execution (Gemini API)
 │   ├── memory.py            # Session storage
 │   ├── agent_core.py        # Workflow orchestrator
-│   ├── tools_ob.py          # Orange Book tools
-│   ├── tools_medicare.py    # Medicare Part D tools
-│   └── paths.py             # Database paths
+│   ├── paths.py             # Database paths
+│   ├── tools/               # Tools directory
+│   │   ├── tools_ob.py      # Orange Book tools
+│   │   ├── tools_medicare.py # Medicare Part D tools
+│   │   └── memory_tools.py  # Memory tools (ADK)
+│   └── plugins/             # ADK plugins
+│       └── token_budget_tracker.py
 ├── Data/                     # Databases & Source Data
 │   ├── products.db          # Orange Book (built)
 │   ├── medicare.db          # Medicare Part D (built)
@@ -247,12 +270,13 @@ Generify/
 
 ```
 drug_cost_agent/agent.py
-    ├── imports from src/tools_ob.py
-    └── imports from src/tools_medicare.py
+    ├── imports from src/tools/tools_ob.py
+    ├── imports from src/tools/tools_medicare.py
+    └── imports from src/tools/memory_tools.py
 
 src/executor.py
-    ├── imports from src/tools_ob.py
-    ├── imports from src/tools_medicare.py
+    ├── imports from src/tools/tools_ob.py
+    ├── imports from src/tools/tools_medicare.py
     └── uses google.generativeai (Gemini API)
 
 src/planner.py
@@ -263,7 +287,7 @@ src/agent_core.py
     ├── imports src/executor.py
     └── imports src/memory.py
 
-src/tools_*.py
+src/tools/tools_*.py
     └── imports src/paths.py (for database paths)
 ```
 
@@ -308,11 +332,20 @@ src/tools_*.py
    - Purpose: Cost comparison and ranking
    - Source: CMS Medicare Part D spending data
 
+4. **Memory Tools** (`src/tools/memory_tools.py`)
+   - Tools: `remember_drug_query()`, `recall_drug_query()`, `get_recent_queries()`
+   - Purpose: Long-term memory for drug queries (used by ADK agent)
+   - Storage: `data/drug_memory.json`
+   - Features: Tracks query frequency, persists across sessions
+
 ## Known Limitations
 
-1. **Architecture Modules Not Integrated**: The planner/executor/memory modules demonstrate the pattern but aren't used by the ADK agent (which uses tools directly)
+1. **Architecture Modules Not Integrated**: The planner/executor/memory modules (`src/planner.py`, `src/executor.py`, `src/memory.py`) demonstrate the required pattern but aren't used by the ADK agent. The ADK agent uses tools directly via its instruction-based workflow and has its own memory system (`src/tools/memory_tools.py`).
 
-2. **Memory Storage**: Session memory stored in JSON file - not scalable for production but sufficient for demo
+2. **Memory Storage**: 
+   - Session memory (`src/memory.py`) stored in `Data/sessions.json` - not scalable for production but sufficient for demo
+   - Drug memory (`src/tools/memory_tools.py`) stored in `data/drug_memory.json` - tracks drug queries for ADK agent
+   - Both use simple JSON file storage, not suitable for high-scale production
 
 3. **Error Handling**: Basic error handling - could be enhanced with retries and better error messages
 

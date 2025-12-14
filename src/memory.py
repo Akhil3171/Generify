@@ -6,7 +6,7 @@ import json
 import os
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timedelta
 import uuid
 
 
@@ -104,19 +104,36 @@ class SessionMemory:
         """Get a specific session by ID."""
         return self.sessions.get(session_id)
 
-    def list_sessions(self, limit: int = 50) -> List[Dict[str, Any]]:
+    def list_sessions(self, limit: int = 50, last_24h_only: bool = False) -> List[Dict[str, Any]]:
         """
         List all sessions, sorted by most recent.
         
         Args:
             limit: Maximum number of sessions to return
+            last_24h_only: If True, only include sessions with interactions in last 24 hours
             
         Returns:
             List of session summaries
         """
+        cutoff_time = datetime.now() - timedelta(hours=24) if last_24h_only else None
+        
         sessions_list = []
         for session_id, session_data in self.sessions.items():
             interactions = session_data.get("interactions", [])
+            
+            # Filter to last 24h if requested
+            if last_24h_only and cutoff_time:
+                recent_interactions = [
+                    i for i in interactions
+                    if i.get("timestamp") and datetime.fromisoformat(i.get("timestamp", "")) >= cutoff_time
+                ]
+                if not recent_interactions:
+                    continue  # Skip sessions with no recent interactions
+                interactions = recent_interactions
+            
+            if not interactions:
+                continue
+            
             sessions_list.append({
                 "session_id": session_id,
                 "created_at": session_data.get("created_at"),
@@ -132,7 +149,7 @@ class SessionMemory:
 
     def retrieve_from_session(self, session_id: str, user_input: str, limit: int = 5) -> List[Dict[str, Any]]:
         """
-        Retrieve relevant past interactions from a specific session.
+        Retrieve relevant past interactions from a specific session within last 24 hours.
         
         Args:
             session_id: Session to search in
@@ -140,11 +157,14 @@ class SessionMemory:
             limit: Maximum number of entries to return
             
         Returns:
-            List of relevant past interactions
+            List of relevant past interactions from last 24 hours
         """
         session = self.get_session(session_id)
         if not session or not session.get("interactions"):
             return []
+        
+        # Filter to last 24 hours
+        cutoff_time = datetime.now() - timedelta(hours=24)
         
         # Simple keyword matching
         user_lower = user_input.lower()
@@ -152,6 +172,16 @@ class SessionMemory:
         
         interactions = session["interactions"]
         for entry in reversed(interactions):  # Most recent first
+            # Check if entry is within last 24 hours
+            entry_time_str = entry.get("timestamp", "")
+            if entry_time_str:
+                try:
+                    entry_time = datetime.fromisoformat(entry_time_str)
+                    if entry_time < cutoff_time:
+                        continue  # Skip entries older than 24 hours
+                except (ValueError, TypeError):
+                    pass  # If timestamp parsing fails, include it anyway
+            
             entry_input = entry.get("user_input", "").lower()
             drug_name = entry.get("drug_name", "").lower()
             
@@ -162,6 +192,55 @@ class SessionMemory:
                     break
         
         return relevant
+    
+    def get_recent_24h(self, session_id: str | None = None) -> List[Dict[str, Any]]:
+        """
+        Get all interactions from the last 24 hours.
+        
+        Args:
+            session_id: Optional session ID. If None, returns from all sessions.
+            
+        Returns:
+            List of all interactions from last 24 hours
+        """
+        cutoff_time = datetime.now() - timedelta(hours=24)
+        recent_interactions = []
+        
+        if session_id:
+            # Get from specific session
+            session = self.get_session(session_id)
+            if session:
+                interactions = session.get("interactions", [])
+                for entry in interactions:
+                    entry_time_str = entry.get("timestamp", "")
+                    if entry_time_str:
+                        try:
+                            entry_time = datetime.fromisoformat(entry_time_str)
+                            if entry_time >= cutoff_time:
+                                recent_interactions.append(entry)
+                        except (ValueError, TypeError):
+                            pass
+        else:
+            # Get from all sessions
+            for session_data in self.sessions.values():
+                interactions = session_data.get("interactions", [])
+                for entry in interactions:
+                    entry_time_str = entry.get("timestamp", "")
+                    if entry_time_str:
+                        try:
+                            entry_time = datetime.fromisoformat(entry_time_str)
+                            if entry_time >= cutoff_time:
+                                recent_interactions.append(entry)
+                        except (ValueError, TypeError):
+                            pass
+        
+        # Sort by timestamp, most recent first
+        recent_interactions.sort(
+            key=lambda x: datetime.fromisoformat(x.get("timestamp", "1970-01-01")),
+            reverse=True
+        )
+        
+        return recent_interactions
 
     def delete_session(self, session_id: str) -> bool:
         """Delete a session."""
@@ -196,8 +275,13 @@ def store_session(
 
 
 def retrieve_from_session(session_id: str, user_input: str, limit: int = 5) -> List[Dict[str, Any]]:
-    """Convenience function to retrieve memory from a session."""
+    """Convenience function to retrieve memory from a session (last 24 hours)."""
     return get_memory().retrieve_from_session(session_id, user_input, limit)
+
+
+def get_recent_24h(session_id: str | None = None) -> List[Dict[str, Any]]:
+    """Convenience function to get all interactions from last 24 hours."""
+    return get_memory().get_recent_24h(session_id)
 
 
 def get_session(session_id: str) -> Dict[str, Any] | None:
@@ -205,7 +289,7 @@ def get_session(session_id: str) -> Dict[str, Any] | None:
     return get_memory().get_session(session_id)
 
 
-def list_sessions(limit: int = 50) -> List[Dict[str, Any]]:
-    """List all sessions."""
-    return get_memory().list_sessions(limit)
+def list_sessions(limit: int = 50, last_24h_only: bool = False) -> List[Dict[str, Any]]:
+    """List all sessions. Set last_24h_only=True to filter to sessions with interactions in last 24 hours."""
+    return get_memory().list_sessions(limit, last_24h_only)
 
