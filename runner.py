@@ -20,6 +20,7 @@ from google.adk.models.llm_response import LlmResponse
 from typing import Optional
 import logging
 
+# Import custom token budget counter plugin
 from src.plugins.token_budget_tracker import TokenBudgetTracker
 
 logger = logging.getLogger(__name__)
@@ -55,8 +56,8 @@ def create_runner():
     token_counter = TokenCounterPlugin()
     token_tracker = TokenBudgetTracker(
         history_file="data/token_usage_history.json",
-        buffer_multiplier=1.5,
-        percentile_threshold=95
+        buffer_multiplier=1.5,  # 150% of P95
+        percentile_threshold=95  # Ignore top 5% (outliers)
     )
     
     print("✅ Plugins created")
