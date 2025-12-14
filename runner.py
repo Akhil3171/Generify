@@ -20,6 +20,8 @@ from google.adk.models.llm_response import LlmResponse
 from typing import Optional
 import logging
 
+from src.plugins.token_budget_tracker import TokenBudgetTracker
+
 logger = logging.getLogger(__name__)
 
 class TokenCounterPlugin(BasePlugin):
@@ -51,13 +53,18 @@ def create_runner():
     # Create plugins FIRST (before using them!)
     logging_plugin = LoggingPlugin()
     token_counter = TokenCounterPlugin()
+    token_tracker = TokenBudgetTracker(
+        history_file="data/token_usage_history.json",
+        buffer_multiplier=1.5,
+        percentile_threshold=95
+    )
     
     print("✅ Plugins created")
 
     # Create runner (simpler API in your ADK version)
     runner = InMemoryRunner(
         agent=root_agent,
-        plugins=[logging_plugin, token_counter]  # ✅ Pass plugins here
+        plugins=[logging_plugin, token_counter, token_tracker]  # ✅ Pass plugins here
     )
 
     # Initialize services
