@@ -58,7 +58,7 @@ jobs:
         from drug_cost_agent import root_agent
         assert root_agent.name == 'drug_cost_agent', 'Agent name mismatch'
         assert root_agent.model == 'gemini-2.5-flash', 'Model mismatch'
-        assert len(root_agent.tools) == 5, f'Expected 5 tools, got {len(root_agent.tools)}'
+        assert len(root_agent.tools) == 8, f'Expected 8 tools, got {len(root_agent.tools)}'
         print('✓ Agent configuration valid')
         "
     
@@ -66,8 +66,9 @@ jobs:
       run: |
         python -m py_compile drug_cost_agent/agent.py
         python -m py_compile src/paths.py
-        python -m py_compile src/tools_medicare.py
-        python -m py_compile src/tools_ob.py
+        python -m py_compile src/tools/tools_medicare.py
+        python -m py_compile src/tools/tools_ob.py
+        python -m py_compile src/tools/memory_tools.py
         echo "✓ No syntax errors found"
 
 
