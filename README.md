@@ -20,8 +20,13 @@ Generify uses the Orange Book (FDA) to identify therapeutic equivalent drugs and
 - Python 3.11+
 - Google Gemini API key ([Get one here](https://aistudio.google.com/app/apikey))
 - Source data files (see Data Setup below)
+- Google ADK with eval
 
 ### Installation
+
+0. **Install Google ADK**
+   pip install 'google-adk[eval]'
+
 
 1. **Clone the repository**
    ```bash
@@ -77,6 +82,16 @@ Generify uses the Orange Book (FDA) to identify therapeutic equivalent drugs and
    
    # Auto-reload (development)
    adk web . --reload
+   ```
+6.  **OPTIONAL - Run adk eval test cases**
+   e.g. on separate terminal or new command line
+   a. Run tests and get simple results (PASS/FAIL metrics)
+   ```bash
+   adk eval drug_cost_agent evaluation\test_cases.json --config_file_path evaluation\eval_config.json
+   ```
+   b. Run tests and get detailed results
+   ```bash
+   adk eval drug_cost_agent evaluation\test_cases.json --config_file_path evaluation\eval_config.json --print_detailed_results
    ```
 
 ### Project Structure
