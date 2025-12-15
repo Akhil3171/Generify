@@ -11,7 +11,7 @@ Generify uses the Orange Book (FDA) to identify therapeutic equivalent drugs and
 - [x] All code in `src/` runs without errors  
 - [x] `ARCHITECTURE.md` contains a clear diagram sketch and explanation  
 - [x] `EXPLANATION.md` covers planning, tool use, memory, and limitations  
-- [ ] `DEMO.md` links to a 3–5 min video with timestamped highlights *(Add video link when ready)*  
+- [x] `DEMO.md` links to a 3–5 min video with timestamped highlights *((https://youtu.be/BxoGwARAWCY))*  
 
 ## 🚀 Getting Started
 
