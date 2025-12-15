@@ -7,7 +7,7 @@ This demo showcases Generify, a tool-using AI agent that helps users find equiva
 ## Video Link
 
 📺 **Demo Video (3-5 minutes):**  
-[**Add your video link here**](https://your.video.link.here)
+[**Add your video link here**](https://youtu.be/BxoGwARAWCY)
 
 **Note:** Please provide a hosted public video link (YouTube unlisted / Loom / Vimeo). Do NOT upload raw video files. Videos longer than 5 minutes may not be reviewed.
 
