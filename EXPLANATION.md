@@ -195,6 +195,7 @@ All tools query SQLite databases (`products.db` and `medicare.db`) using indexed
 ### Current Bugs
 
 1. **Memory Response Bug**: Sometimes the final response includes the extra response from the agent remembering the search (when `remember_drug_query()` is called). This is an unfixed bug where the memory tool's response may leak into the final user-facing response.
+2. **Redundant Recent History Bug**:  When the user inquires about past drug searches, the agent does not consolidate duplicates to only show the summary from the latest instance of that drug search session.
 
 ### Data Limitations
 
@@ -214,6 +215,7 @@ All tools query SQLite databases (`products.db` and `medicare.db`) using indexed
    - Simple storage structure (no semantic search)
    - No vector embeddings for better retrieval
    - Could be enhanced with vector database (e.g., ChromaDB)
+   - No multi-user account support to safeguard each person's personal drug search history
 
 2. **Planning Style**:
    - Instruction-based planning relies on Gemini's interpretation of instructions
@@ -297,6 +299,8 @@ All tools query SQLite databases (`products.db` and `medicare.db`) using indexed
 
 ### Logging
 
+Note:  Attempts were made to use Google ADK's LoggingPlugin for Observability of AI Agent.  This and other plugins such as for token count and budget failed due to Google ADK always ignoring the custom runner.py that imports and uses the plugins.  Different workarounds were attempted in collaboration with Claude.ai but we were unable to determine how to use LoggingPlugin by time of submission.
+
 **ADK Framework Logging**:
 - Use `adk web . -v` for verbose logging
 - Or `adk web . --log_level debug` for debug level
@@ -323,6 +327,11 @@ All tools query SQLite databases (`products.db` and `medicare.db`) using indexed
 - Validates agent configuration
 - Syntax checking
 - Ensures all required modules can be imported
+
+**Agent Evaluation**:
+- eval_config.json has one metric for LLM judged similarity of final response.
+- test_cases.json has 5 test cases with different User inputs and expected final responses.
+Note:  Efforts to add Hallucination and Tool-trajectory metrics to eval_config.json with Claude.ai's help were unsuccessful.  We were unsure where to specify the tool trajectory, and the metric for hallucination had validation errors we did not yet fix for the Dec 12-15, 2025 ODSC Agentic AI Hackathon.
 
 **Manual Testing**:
 ```bash
